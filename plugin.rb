@@ -1,6 +1,6 @@
 # name: discourse-anonymous-categories
 # about: Always-anonymous categories for Discourse
-# version: 0.5.0
+# version: 0.5.1
 # authors: Communiteq
 # url: https://github.com/communiteq/discourse-anonymous-categories
 
@@ -62,8 +62,8 @@ after_initialize do
       return nil
     end
 
-    user = manager.user
     args = manager.args
+    return nil if args[:whisper] == "true"
 
     # Note that an uncategorized topic post comes through as an empty category
     # rather than category "1".  We need to special case this for now...
@@ -78,6 +78,7 @@ after_initialize do
       return nil
     end
 
+    user = manager.user
     creator = AnonymousShadowCreator.new(user)
     anon_user = creator.get_bypass_sitesettings()
 
@@ -104,6 +105,8 @@ after_initialize do
     return result
   end
 
+  # NewPostManager doesn't get to see if it's a whisper if we don't pass it
+  add_permitted_post_create_param("whisper")
   NewPostManager.add_handler(&@anon_handler)
 
 end
