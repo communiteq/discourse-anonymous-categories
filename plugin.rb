@@ -1,6 +1,6 @@
 # name: discourse-anonymous-categories
 # about: Always-anonymous categories for Discourse
-# version: 0.5.1
+# version: 2026.1.0
 # authors: Communiteq
 # url: https://github.com/communiteq/discourse-anonymous-categories
 
@@ -58,25 +58,31 @@ after_initialize do
   end
 
   @anon_handler = lambda do |manager|
-    if !SiteSetting.anonymous_categories_enabled
-      return nil
-    end
+    return nil if !SiteSetting.anonymous_categories_enabled
 
+    # don't act on whispers or PMs
     args = manager.args
     return nil if args[:whisper] == "true"
+    return nil if args[:archetype] == Archetype.private_message
+    return nil if args[:topic_id] && Topic.where(id: args[:topic_id], archetype: Archetype.private_message).exists?
 
     # Note that an uncategorized topic post comes through as an empty category
     # rather than category "1".  We need to special case this for now...
     category_id = args[:category]
     category_id = SiteSetting.uncategorized_category_id.to_s if category_id.blank?
-
-    # Have to figure out what category the post is in to see if it needs to be
-    # anonymized.
     category = Category.find(category_id)
+    return nil unless category.custom_fields["force_anonymous_posting"] == "true"
 
-    if category.custom_fields["force_anonymous_posting"] != "true"
-      return nil
-    end
+    # https://meta.discourse.org/t/always-anonymous-categories-plugin/41110/63
+    # the default handler has all kind of checks for watched words etc
+    # Problem is that NewPostManager has a read-only user, which we cannot change.
+    # To work around that, we create the post ourselves and bail out with an "error".
+    # However, this skipped the various checks that the default handler does.
+    # The fix here is that we do perform the checks here and if they fail then we just
+    # bail out.
+
+    result = NewPostManager.default_handler(manager)
+    return result if result
 
     user = manager.user
     creator = AnonymousShadowCreator.new(user)
