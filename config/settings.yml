@@ -2,3 +2,6 @@ plugins:
   anonymous_categories_enabled:
     default: false
     client: true
+  anonymous_categories_show_popup:
+    default: true
+    client: false

@@ -96,8 +96,10 @@ after_initialize do
 
     if result.success?
       result.post = post
-      result.message = "Your post has been anonymized."
       result.route_to = "/t/#{post.topic.slug}/#{post.topic.id}/#{post.post_number}"
+      if SiteSetting.anonymous_categories_show_popup
+        result.message = I18n.t("anonymous_categories.message")
+      end
     else
       user.flag_linked_posts_as_spam if creator.spam?
     end

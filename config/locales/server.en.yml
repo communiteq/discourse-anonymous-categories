@@ -1,4 +1,6 @@
 en:
+  anonymous_categories:
+    message: "Your post has been anonymized."
   site_settings:
     anonymous_categories_enabled: "Enable \"always-anonymous\" categories."
-    # anonymous_categories: "Categories that force \"always-anonymous\" behavior."
+    anonymous_categories_show_popup: "Show a confirmation popup when a post has been anonymized."
