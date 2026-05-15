@@ -1,9 +1,9 @@
 import { computed } from "@ember/object";
-import Category from 'discourse/models/category';
+import Category from "discourse/models/category";
 
 export default {
-  name: 'extend-category-for-anonymous',
-  before: 'inject-discourse-objects',
+  name: "extend-category-for-anonymous",
+  before: "inject-discourse-objects",
 
   initialize() {
     Category.reopen({
@@ -16,5 +16,5 @@ export default {
         }
       ),
     });
-  }
+  },
 };
