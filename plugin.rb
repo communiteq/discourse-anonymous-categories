@@ -1,6 +1,6 @@
 # name: discourse-anonymous-categories
 # about: Always-anonymous categories for Discourse
-# version: 2026.1.0
+# version: 2026.4
 # authors: Communiteq
 # url: https://github.com/communiteq/discourse-anonymous-categories
 

@@ -5,6 +5,10 @@ import withEventValue from "discourse/helpers/with-event-value";
 import { i18n } from "discourse-i18n";
 
 export default class AnonymousCategories extends Component {
+  static shouldRender(args, context) {
+    return !context.siteSettings.enable_simplified_category_creation;
+  }
+
   get forceAnonymousPosting() {
     const value = this.args.category.custom_fields.force_anonymous_posting;
     return value === true || value?.toString() === "true";
